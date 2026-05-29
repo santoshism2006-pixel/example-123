@@ -1,47 +1,70 @@
-# Sample testbench for a Tiny Tapeout project
+# 4-Bit Comparator - Tiny Tapeout Project
 
-This is a sample testbench for a Tiny Tapeout project. It uses [cocotb](https://docs.cocotb.org/en/stable/) to drive the DUT and check the outputs.
-See below to get started or for more information, check the [website](https://tinytapeout.com/hdl/testing/).
+## Description
 
-## Setting up
+This project implements a 4-bit comparator using Verilog HDL for Tiny Tapeout.
 
-1. Edit [Makefile](Makefile) and modify `PROJECT_SOURCES` to point to your Verilog files.
-2. Edit [tb.v](tb.v) and replace `tt_um_example` with your module name.
+The design compares two 4-bit binary numbers:
+- A = ui_in[3:0]
+- B = ui_in[7:4]
 
-## How to run
+Based on the comparison result, the circuit generates three outputs:
+- uo_out[0] = 1 when A > B
+- uo_out[1] = 1 when A == B
+- uo_out[2] = 1 when A < B
 
-To run the RTL simulation:
+Only one output is HIGH at a time.
 
-```sh
-make -B
-```
+---
 
-To run gatelevel simulation, first harden your project and copy `../runs/wokwi/results/final/verilog/gl/{your_module_name}.v` to `gate_level_netlist.v`.
+## Features
 
-Then run:
+- 4-bit binary comparison
+- Combinational logic design
+- Tiny Tapeout compatible
+- Implemented in Verilog HDL
 
-```sh
-make -B GATES=yes
-```
+---
 
-If you wish to save the waveform in VCD format instead of FST format, edit tb.v to use `$dumpfile("tb.vcd");` and then run:
+## Input Mapping
 
-```sh
-make -B FST=
-```
+| Input Pins | Function |
+|------------|----------|
+| ui_in[3:0] | 4-bit input A |
+| ui_in[7:4] | 4-bit input B |
 
-This will generate `tb.vcd` instead of `tb.fst`.
+---
 
-## How to view the waveform file
+## Output Mapping
 
-Using GTKWave
+| Output Pins | Function |
+|-------------|----------|
+| uo_out[0] | A > B |
+| uo_out[1] | A == B |
+| uo_out[2] | A < B |
 
-```sh
-gtkwave tb.fst tb.gtkw
-```
+---
 
-Using Surfer
+## Example
 
-```sh
-surfer tb.fst
-```
+| A | B | Result |
+|---|---|--------|
+| 0101 | 0011 | A > B |
+| 0110 | 0110 | A == B |
+| 0010 | 0100 | A < B |
+
+---
+
+## Tools Used
+
+- Verilog HDL
+- Tiny Tapeout
+- GitHub
+- Icarus Verilog
+- Cocotb
+
+---
+
+## Author
+
+Lyra
