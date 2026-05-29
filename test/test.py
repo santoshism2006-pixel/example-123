@@ -8,33 +8,65 @@ from cocotb.triggers import ClockCycles
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+    dut._log.info("Start 4-Bit Comparator Test")
 
-    # Set the clock period to 10 us (100 KHz)
+    # Create clock with 10 us period
     clock = Clock(dut.clk, 10, unit="us")
     cocotb.start_soon(clock.start())
 
-    # Reset
+    # Reset the design
     dut._log.info("Reset")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+
+    await ClockCycles(dut.clk, 5)
+
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    dut._log.info("Starting Comparator Tests")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # ----------------------------------------
+    # Test Case 1 : A > B
+    # A = 0101 (5)
+    # B = 0011 (3)
+    # ----------------------------------------
 
-    # Wait for one clock cycle to see the output values
+    dut.ui_in.value = 0b00110101
+
     await ClockCycles(dut.clk, 1)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    assert dut.uo_out.value == 0b00000001, "A > B Test Failed"
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("A > B Test Passed")
+
+    # ----------------------------------------
+    # Test Case 2 : A == B
+    # A = 0110 (6)
+    # B = 0110 (6)
+    # ----------------------------------------
+
+    dut.ui_in.value = 0b01100110
+
+    await ClockCycles(dut.clk, 1)
+
+    assert dut.uo_out.value == 0b00000010, "A == B Test Failed"
+
+    dut._log.info("A == B Test Passed")
+
+    # ----------------------------------------
+    # Test Case 3 : A < B
+    # A = 0010 (2)
+    # B = 0100 (4)
+    # ----------------------------------------
+
+    dut.ui_in.value = 0b01000010
+
+    await ClockCycles(dut.clk, 1)
+
+    assert dut.uo_out.value == 0b00000100, "A < B Test Failed"
+
+    dut._log.info("A < B Test Passed")
+
+    dut._log.info("All 4-Bit Comparator Tests Passed Successfully!")
