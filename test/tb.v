@@ -1,35 +1,97 @@
-import cocotb
-from cocotb.triggers import Timer
+`default_nettype none
+`timescale 1ns / 1ps
 
+/*
+ * Testbench for 4-Bit Comparator
+ */
 
-@cocotb.test()
-async def test_4bit_comparator(dut):
+module tb;
 
-    # Test Case 1 : A > B
-    dut.ui_in.value = 0b00110101   # B=0011 (3), A=0101 (5)
-    await Timer(10, units="ns")
+    // Inputs
+    reg  [7:0] ui_in;
+    reg  [7:0] uio_in;
+    reg        ena;
+    reg        clk;
+    reg        rst_n;
 
-    assert dut.uo_out.value & 0b001 == 1, "A > B failed"
-    assert (dut.uo_out.value >> 1) & 1 == 0
-    assert (dut.uo_out.value >> 2) & 1 == 0
+    // Outputs
+    wire [7:0] uo_out;
+    wire [7:0] uio_out;
+    wire [7:0] uio_oe;
 
+    // Instantiate the DUT
+    tt_um_4bit_comparator dut (
+        .ui_in(ui_in),
+        .uo_out(uo_out),
+        .uio_in(uio_in),
+        .uio_out(uio_out),
+        .uio_oe(uio_oe),
+        .ena(ena),
+        .clk(clk),
+        .rst_n(rst_n)
+    );
 
-    # Test Case 2 : A == B
-    dut.ui_in.value = 0b01100110   # B=0110 (6), A=0110 (6)
-    await Timer(10, units="ns")
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
 
-    assert (dut.uo_out.value >> 1) & 1 == 1, "A == B failed"
-    assert dut.uo_out.value & 1 == 0
-    assert (dut.uo_out.value >> 2) & 1 == 0
+    // Test sequence
+    initial begin
 
+        // Initialize signals
+        ena    = 1'b1;
+        rst_n  = 1'b0;
+        ui_in  = 8'b00000000;
+        uio_in = 8'b00000000;
 
-    # Test Case 3 : A < B
-    dut.ui_in.value = 0b01000010   # B=0100 (4), A=0010 (2)
-    await Timer(10, units="ns")
+        // Reset
+        #20;
+        rst_n = 1'b1;
 
-    assert (dut.uo_out.value >> 2) & 1 == 1, "A < B failed"
-    assert dut.uo_out.value & 1 == 0
-    assert (dut.uo_out.value >> 1) & 1 == 0
+        // --------------------------------
+        // Test Case 1 : A > B
+        // A = 0101 (5)
+        // B = 0011 (3)
+        // --------------------------------
 
+        ui_in = 8'b00110101;
 
-    print("All 4-bit comparator test cases passed!")
+        #10;
+
+        $display("Test 1: A > B");
+        $display("uo_out = %b", uo_out);
+
+        // --------------------------------
+        // Test Case 2 : A == B
+        // A = 0110 (6)
+        // B = 0110 (6)
+        // --------------------------------
+
+        ui_in = 8'b01100110;
+
+        #10;
+
+        $display("Test 2: A == B");
+        $display("uo_out = %b", uo_out);
+
+        // --------------------------------
+        // Test Case 3 : A < B
+        // A = 0010 (2)
+        // B = 0100 (4)
+        // --------------------------------
+
+        ui_in = 8'b01000010;
+
+        #10;
+
+        $display("Test 3: A < B");
+        $display("uo_out = %b", uo_out);
+
+        #20;
+
+        $finish;
+    end
+
+endmodule
