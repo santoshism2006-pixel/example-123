@@ -3,7 +3,7 @@
 
 TOPLEVEL_LANG = verilog
 
-VERILOG_SOURCES = $(PWD)/src/tt_um_4bit_comparator.v
+VERILOG_SOURCES = ../src/project.v
 
 TOPLEVEL = tt_um_4bit_comparator
 
