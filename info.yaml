@@ -1,8 +1,12 @@
+yaml_version: 6
+
 project:
   title: "4-Bit Counter"
   author: "Lyra"
   description: "A simple 4-bit binary counter implemented in Verilog."
-
+  language: "Verilog"
+  clock_hz: 10000000
+  tiles: "1x1"
   top_module: "tt_um_example"
   source_files:
     - "tt_um_example.v"
